@@ -29,15 +29,11 @@ def export_data(all_vector_data, export_name):
     df = pd.DataFrame(all_vector_data)
     df.to_csv(export_name)
 
-def main():
+def generate_data(export_name, selection, path_folders):
     all_vector_data = []
-    export_name = "data_contacts_interactome3d.csv"
-
-    selection, path_folders = select_interactome_complexes()
-    
-    pool = Pool(20) 
+    pool = Pool(20)
     multiple_results = []
-    
+
     for folder in glob.glob(path_folders):
         pdb_list = glob.glob(os.path.join(folder, "*.pdb"))
         for pdb in pdb_list:
@@ -51,7 +47,15 @@ def main():
             all_vector_data.extend(vector_data)
         except:
             continue
-    export_data(all_vector_data, export_name)
+    return all_vector_data
+
+
+def main():
+    all_vector_data = []
+    export_name = "data_contacts_interactome3d.csv"
+    #selection, path_folders = select_interactome_complexes()
+    #all_vector_data = generate_data(export_name, selection, path_folders)
+    #export_data(all_vector_data, export_name)
     
     df = pd.read_csv(export_name, index_col=0)
     print(df)
