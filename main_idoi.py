@@ -7,6 +7,7 @@ from sklearn.svm import SVC
 from predictor.get_interactome3d_models import select_interactome_complexes
 import glob
 import os
+import pickle
 
 def make_svm(df):
     column_names = list(df.columns.values)
@@ -15,6 +16,8 @@ def make_svm(df):
     y = df[["Class"]].to_numpy()
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state = 0)
     svm_model_linear = SVC(kernel = 'linear', C = 1).fit(X_train, y_train)
+    filename = "SVC_linear_model.sav"
+    pickle.dump(svm_model_linear, open(filename, "wb"))
 
     svm_predictions = svm_model_linear.predict(X_test)
     accuracy = svm_model_linear.score(X_test, y_test)
