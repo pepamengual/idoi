@@ -1,22 +1,24 @@
 import prody
-import predictor.vectors as vectors
+from predictor.vectors import get_vector
+from predictor.vectors import atom_mapping
 
 def get_protein_protein_interactions(pdb_path):
     pdb = prody.parsePDB(pdb_path)
     pdb_chains = read_pdb_chains(pdb_path)
     interface_residues = get_interface_residues(pdb, pdb_chains)
     contact_data = get_contacts(pdb, interface_residues)
-    vector_data = vectors.get_vector(contact_data)
+    vector_data = get_vector(contact_data)
     return vector_data
 
 def get_contacts(pdb, interface_residues):
+    letters = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR"]
     contact_data = {}
     for chain, position, name in interface_residues:
         position_contacts = pdb.select("(protein within 5.00 of (noh resid {0} and chain {1})) and not chain {1}".format(position, chain))
         if position_contacts:
             for atom_contact, residue_name in zip(position_contacts.getNames().tolist(), position_contacts.getResnames().tolist()):
-                if not atom_contact.startswith("H"):
-                    properties = vectors.atom_mapping(residue_name, atom_contact)
+                if not atom_contact.startswith("H") and residue_name in letters:
+                    properties = atom_mapping(residue_name, atom_contact)
                     if properties:
                         for property_ in properties:
                             contact_data.setdefault(chain, {}).setdefault(name, {}).setdefault(property_, 0)

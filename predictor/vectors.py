@@ -7,11 +7,12 @@ def get_vector(data):
     vector_data = []
     for chain, position_dict in data.items():
         for position, property_dict in position_dict.items():
-            vector = {"P": 0, "N": 0, "A": 0, "D": 0, "H": 0, "R": 0, "S": 0, "Class": 0}
-            for property_, value in property_dict.items():
-                vector[property_] += value
             amino_acid = position.split("_")[0]
-            vector["Class"] += aa_code[amino_acid]
+            vector = {"P": 0, "N": 0, "A": 0, "D": 0, "H": 0, "R": 0, "S": 0, "Class": 0}
+            if amino_acid in letters:
+                for property_, value in property_dict.items():
+                    vector[property_] += value
+                vector["Class"] += aa_code[amino_acid]
             vector_data.append(vector)
     return vector_data
 
