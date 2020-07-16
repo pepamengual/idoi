@@ -40,5 +40,7 @@ def atom_mapping(residue_name, atom_contact):
                "TRP": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG": "R", "CD1": "R", "NE1": "D", "CE2": "R", "CZ2": "R", "CH2": "R", "CZ3": "R", "CE3": "R", "CD2": "R"},
                "TYR": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG": "R", "CD1": "R", "CE1": "R", "CZ": "R", "OH": "DA", "CE2": "R", "CD2": "R"},
                "VAL": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG1": "H", "CG2": "H"}}
-
-    return mapping[residue_name][atom_contact]
+    if residue_name in mapping and atom_contact in mapping[residue_name]:
+        return mapping[residue_name][atom_contact]
+    else:
+        return None

@@ -26,7 +26,7 @@ def export_data(all_vector_data, export_name):
 def main():
     all_vector_data = []
     export_name = "data_contacts_interactome3d.csv"
-    pdb_list = ["../1A22_Repair.pdb"]*10
+    pdb_list = ["../1ao7.pdb"]
     
     pool = Pool(2) 
     multiple_results = []
