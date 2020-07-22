@@ -1,22 +1,21 @@
+import copy
+
 def get_vector(data):
-    aa_code = {}
-    letters = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR"]
-    for i, letter in enumerate(letters):
-        aa_code.setdefault(letter, i)
+    amino_acid_list = ["ALA", "CYS", "ASP", "GLU", "PHE", "GLY", "HIS", "ILE", "LYS", "LEU", "MET", "ASN", "PRO", "GLN", "ARG", "SER", "THR", "VAL", "TRP", "TYR"]
 
     vector_data = []
     for chain, position_dict in data.items():
         for position, property_dict in position_dict.items():
             amino_acid = position.split("_")[0]
-            vector = {"P": 0, "N": 0, "A": 0, "D": 0, "H": 0, "R": 0, "S": 0, "Class": 0}
-            if amino_acid in letters:
+            vector = {"P": 0, "N": 0, "A": 0, "D": 0, "H": 0, "R": 0, "S": 0, "h": 0, "b": 0, "p": 0, "k": 0, "a": 0, "s": 0}
+            if amino_acid in amino_acid_list:
+                vector.setdefault("Class", amino_acid)
                 for property_, value in property_dict.items():
                     vector[property_] += value
-                vector["Class"] += aa_code[amino_acid]
             vector_data.append(vector)
     return vector_data
 
-def atom_mapping(residue_name, atom_contact):
+def get_mapping():
     #https://cdn.rcsb.org/wwpdb/docs/documentation/file-format/PDB_format_1992.pdf
     #http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/
     #POSITIVE: P, NEGATIVE: N, HB ACCEPTOR: A,
@@ -41,6 +40,14 @@ def atom_mapping(residue_name, atom_contact):
                "TRP": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG": "R", "CD1": "R", "NE1": "D", "CE2": "R", "CZ2": "R", "CH2": "R", "CZ3": "R", "CE3": "R", "CD2": "R"},
                "TYR": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG": "R", "CD1": "R", "CE1": "R", "CZ": "R", "OH": "DA", "CE2": "R", "CD2": "R"},
                "VAL": {"N": "D", "CA": "H", "C": "H", "O": "A", "CB": "H", "CG1": "H", "CG2": "H"}}
+    return mapping
+
+def atom_mapping(residue_name, atom_contact):
+    #https://cdn.rcsb.org/wwpdb/docs/documentation/file-format/PDB_format_1992.pdf
+    #http://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/charge/
+    #POSITIVE: P, NEGATIVE: N, HB ACCEPTOR: A,
+    #HB DONOR: D, HYDROPHOBIC: H, AROMATIC: R, SULPHUR: S
+    mapping = get_mapping()
     if residue_name in mapping and atom_contact in mapping[residue_name]:
         return mapping[residue_name][atom_contact]
     else:
